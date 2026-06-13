@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/dotnet:8
+    container_name: octofit-app
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace:cached
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=octofit;Username=octofit;Password=octofitpassword"
+      Redis__Configuration: "redis:6379"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:16
+    container_name: octofit-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: octofit
+      POSTGRES_PASSWORD: octofitpassword
+      POSTGRES_DB: octofit
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: octofit-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

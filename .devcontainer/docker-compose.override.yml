@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U octofit -d octofit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
